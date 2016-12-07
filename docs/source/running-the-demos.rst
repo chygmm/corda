@@ -190,21 +190,24 @@ Or you can run them from inside IntelliJ as follows:
 
 In the "Bank Of Corda Demo: Run Issuer" window you should see the following information lines displayed:
 
-    >> Awaiting issuance request
-    >> Self issuing asset
-    >> Transferring asset to issuance requester
-    >> Confirming asset issuance to requester
+- Awaiting issuance request
+- Self issuing asset
+- Transferring asset to issuance requester
+- Confirming asset issuance to requester
 
 In the the client issue request window you should see the following printed:
 
-    >> Successfully processed Cash Issue request
+- Successfully processed Cash Issue request
 
 Launch the Explorer application to visualize the issuance and transfer of cash on each node:
 
-    ./gradlew tools:explorer:run
+    ``./gradlew tools:explorer:run``
 
-(for the Bank of Corda node specify localhost, port 10004, user1, test at the login window)
-(for the Big Corporation node specify localhost, port 10006, user1, test at the login window)
+And use the following logon details:
+
+- for the Bank of Corda node specify localhost, port 10004, username user1, password test
+- for the Big Corporation node specify localhost, port 10006, username user1, password test
+
 See https://docs.corda.net/node-explorer.html for further details on usage.
 
 SIMM and Portfolio Demo - aka the Initial Margin Agreement Demo
