@@ -5,14 +5,12 @@ import joptsimple.OptionParser
 import net.corda.bank.api.BankOfCordaClientApi
 import net.corda.bank.api.BankOfCordaWebApi.IssueRequestParams
 import net.corda.bank.flow.IssuerFlow
-import net.corda.bank.flow.IssuerFlowResult
 import net.corda.core.node.services.ServiceInfo
-import net.corda.core.utilities.loggerFor
+import net.corda.core.transactions.SignedTransaction
 import net.corda.node.driver.driver
 import net.corda.node.services.User
 import net.corda.node.services.startFlowPermission
 import net.corda.node.services.transactions.SimpleNotaryService
-import org.slf4j.Logger
 import kotlin.system.exitProcess
 
 /**
@@ -29,10 +27,6 @@ private class BankOfCordaDriver {
         ISSUER
     }
 
-    companion object {
-        val logger: Logger = loggerFor<BankOfCordaDriver>()
-    }
-
     fun main(args: Array<String>) {
         val parser = OptionParser()
         val roleArg = parser.accepts("role").withRequiredArg().ofType(Role::class.java).describedAs("[ISSUER|ISSUE_CASH_RPC|ISSUE_CASH_WEB]")
@@ -41,7 +35,7 @@ private class BankOfCordaDriver {
         val options = try {
             parser.parse(*args)
         } catch (e: Exception) {
-            logger.error(e.message)
+            println(e.message)
             printHelp(parser)
             exitProcess(1)
         }
@@ -61,19 +55,19 @@ private class BankOfCordaDriver {
         }
         else {
             try {
-                val requestParams = IssueRequestParams(options.valueOf(quantity), options.valueOf(currency), "BigCorporation", "1")
+                val requestParams = IssueRequestParams(options.valueOf(quantity), options.valueOf(currency), "BigCorporation", "1", "BankOfCorda")
                 when (role) {
                     Role.ISSUE_CASH_RPC -> {
-                        logger.info("Requesting Cash via RPC ...")
+                        println("Requesting Cash via RPC ...")
                         val result = BankOfCordaClientApi(HostAndPort.fromString("localhost:10004")).requestRPCIssue(requestParams)
-                        if (result is IssuerFlowResult.Success)
-                            logger.info("Success!! You transaction receipt is ${result.txnId}")
+                        if (result is SignedTransaction)
+                            println("Success!! You transaction receipt is ${result.tx.id}")
                     }
                     Role.ISSUE_CASH_WEB -> {
-                        logger.info("Requesting Cash via Web ...")
+                        println("Requesting Cash via Web ...")
                         val result = BankOfCordaClientApi(HostAndPort.fromString("localhost:10005")).requestWebIssue(requestParams)
                         if (result)
-                            logger.info("Successfully processed Cash Issue request")
+                            println("Successfully processed Cash Issue request")
                     }
                     Role.ISSUER -> {}
                 }
